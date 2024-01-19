@@ -39,15 +39,22 @@ plot(cdt_days$cdt_day, cdt_days$miles, pch=20, col=day_type_cols[match(cdt_days$
 legend("topright", day_types, fill=day_type_cols, border=day_type_cols)
 
 
+mile_matrix <- c()
+for (i in 1:length(day_types))
+  {
+  miles_i <- hist(cdt_days$miles[cdt_days$day_type == day_types[i]], breaks = seq(-1, max(cdt_days$miles), 1), plot=F)  
+  mile_matrix <- rbind(mile_matrix, miles_i$counts)
+  }
 
-hist(cdt_days$miles, col='black', breaks = seq(-1, max(cdt_days$miles), 1), xlab='Miles', ylab='Days', main='CDT miles per day')
-hist(cdt_days$miles[cdt_days$day_type == 'full'], col='black', breaks = seq(-1, max(cdt_days$miles), 1), add=T)
-hist(cdt_days$miles[cdt_days$day_type == 'zero'], col='blue', border = 'blue', breaks = seq(-1, max(cdt_days$miles), 1), add=T)
-hist(cdt_days$miles[cdt_days$day_type == 'nearo'], col='red', border = 'red', breaks = seq(-1, max(cdt_days$miles), 1), add=T)
-hist(cdt_days$miles[cdt_days$day_type == 'hero'], col='green', border = 'green', breaks = seq(-1, max(cdt_days$miles), 1), add=T)
-abline(v=mean(cdt_days$miles[cdt_days$day_type == 'full']))
-text(mean(cdt_days$miles[cdt_days$day_type == 'full']) - 3, 15, round(mean(cdt_days$miles[cdt_days$day_type == 'full']), 1))
+barplot(mile_matrix, beside=F, col=day_type_cols, space=0, border=NA, xlab='Miles', ylab='Days', main='CDT miles per day')
 legend("topright", day_types, fill=day_type_cols, border=day_type_cols)
+axis(1, at=0.5 + seq(0, max(cdt_days$miles) + 5, 5), seq(0, max(cdt_days$miles) + 5, 5))
+
+for (i in 1:length(day_types))
+  {
+  abline(v=mean(cdt_days$miles[cdt_days$day_type == day_types[i]]))
+  text(mean(cdt_days$miles[cdt_days$day_type == day_types[i]]) - 2, max(mile_matrix), round(mean(cdt_days$miles[cdt_days$day_type == day_types[i]]), 1), col=day_type_cols[i], cex=.7)
+  }
 
 
 
@@ -181,7 +188,7 @@ text(mean(c(longitude_min, longitude_max)), latitude_max + .5, 'Degrees')
 
 
 
-plot(1, type='n', xlim=c(-117, -102), ylim=c(31, 50), bty='n', xaxt='n', yaxt='n', xlab='', ylab='', main = 'People')
+plot(1, type='n', xlim=c(-117, -102), ylim=c(31, 50), bty='n', xaxt='n', yaxt='n', xlab='', ylab='', main = 'New people by day')
 map('state', region = 'Montana', add=T)
 map('state', region = 'Idaho', add=T)
 map('state', region = 'Wyoming', add=T)
