@@ -33,15 +33,23 @@ cdt_people <- dbGetQuery(myCon, "select p.cdt_day, latitude, longitude, num_peop
 
 pdf("cdt_days.pdf", height=10, width=10)
 #miles per day
-hist(cdt_days$miles, col='black', breaks = seq(0, max(cdt_days$miles) + 1, 1), xlab='Miles', ylab='Days', main='CDT miles per day')
-hist(cdt_days$miles[cdt_days$day_type == 'full'], col='red', breaks = seq(0, max(cdt_days$miles) + 1, 1), add=T)
-abline(v=mean(cdt_days$miles[cdt_days$day_type == 'full']), col='red')
-text(mean(cdt_days$miles[cdt_days$day_type == 'full']) - 3, 15, round(mean(cdt_days$miles[cdt_days$day_type == 'full']), 1), col='red')
-
 day_types <- c('full', 'zero', 'nearo', 'hero')
 day_type_cols <- c('black', 'blue', 'red', 'green')
 plot(cdt_days$cdt_day, cdt_days$miles, pch=20, col=day_type_cols[match(cdt_days$day_type, day_types)], xlab='CDT days', ylab='Miles', main='CDT miles per day')
 legend("topright", day_types, fill=day_type_cols, border=day_type_cols)
+
+
+
+hist(cdt_days$miles, col='black', breaks = seq(-1, max(cdt_days$miles), 1), xlab='Miles', ylab='Days', main='CDT miles per day')
+hist(cdt_days$miles[cdt_days$day_type == 'full'], col='black', breaks = seq(-1, max(cdt_days$miles), 1), add=T)
+hist(cdt_days$miles[cdt_days$day_type == 'zero'], col='blue', border = 'blue', breaks = seq(-1, max(cdt_days$miles), 1), add=T)
+hist(cdt_days$miles[cdt_days$day_type == 'nearo'], col='red', border = 'red', breaks = seq(-1, max(cdt_days$miles), 1), add=T)
+hist(cdt_days$miles[cdt_days$day_type == 'hero'], col='green', border = 'green', breaks = seq(-1, max(cdt_days$miles), 1), add=T)
+abline(v=mean(cdt_days$miles[cdt_days$day_type == 'full']))
+text(mean(cdt_days$miles[cdt_days$day_type == 'full']) - 3, 15, round(mean(cdt_days$miles[cdt_days$day_type == 'full']), 1))
+legend("topright", day_types, fill=day_type_cols, border=day_type_cols)
+
+
 
 #low temps
 hist(cdt_low_temps$low_temp, col='black', breaks = seq(floor(min(cdt_low_temps$low_temp)), max(cdt_low_temps$low_temp) + 1, 1), xlab='Degrees Fahrenheit', ylab='Days', main='CDT overnight low temps')
