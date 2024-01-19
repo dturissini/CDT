@@ -195,6 +195,8 @@ map('state', region = 'Wyoming', add=T)
 map('state', region = 'Colorado', add=T)
 map('state', region = 'New Mexico', add=T)
 
-points(cdt_people$longitude, cdt_people$latitude, pch=20, col=adjustcolor('black', .6), cex=cdt_people$num_people / 2)
+people_cols = tim.colors(max(cdt_people$num_people))
+points(cdt_people$longitude, cdt_people$latitude, pch=20, col=adjustcolor(people_cols[cdt_people$num_people], .6), cex=cdt_people$num_people / 2)
+legend('bottomleft', legend=1:max(cdt_people$num_people), pch=20, pt.cex=(1:max(cdt_people$num_people))/2, col=adjustcolor(people_cols, .6), y.intersp=1.3)
 dev.off()
 
