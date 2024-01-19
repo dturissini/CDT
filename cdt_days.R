@@ -52,7 +52,7 @@ axis(1, at=0.5 + seq(0, max(cdt_days$miles) + 5, 5), seq(0, max(cdt_days$miles) 
 
 for (i in 1:length(day_types))
   {
-  abline(v=mean(cdt_days$miles[cdt_days$day_type == day_types[i]]))
+  abline(v=mean(cdt_days$miles[cdt_days$day_type == day_types[i]]), col=day_type_cols[i])
   text(mean(cdt_days$miles[cdt_days$day_type == day_types[i]]) - 2, max(mile_matrix), round(mean(cdt_days$miles[cdt_days$day_type == day_types[i]]), 1), col=day_type_cols[i], cex=.7)
   }
 
