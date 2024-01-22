@@ -73,7 +73,7 @@ day_type_cols <- adjustcolor(c('black', 'blue', 'orange', 'green'), .6)
 pdf("cdt_days.pdf", height=10, width=10)
 #miles per day
 plot(cdt_days$cdt_day, cdt_days$miles, pch=20, col=day_type_cols[match(cdt_days$day_type, day_types)], xlab='CDT days', ylab='Miles', main='CDT miles per day')
-legend("topright", day_types, fill=day_type_cols, border=day_type_cols)
+legend("topright", day_type_mains, fill=day_type_cols, border=day_type_cols)
 
 
 mile_matrix <- c()
