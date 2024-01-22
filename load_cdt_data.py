@@ -8,19 +8,26 @@ import gpxpy
 import gpxpy.gpx
 from datetime import datetime
 import glob                                                                 
+import sys
+import getpass
 
-
-#update hitch dates
+#python3 load_cdt_data.py 2023-07-02 cdt_gps_edited.txt cdt_govee
 
 
 def main():
   engine = create_engine('mysql+mysqlconnector://localhost/cdt', connect_args={'read_default_file': '/Users/' + getpass.getuser() + '/.my.cnf'})
   conn = engine.connect()
   
+  (start_date, edited_gps_file, govee_dir) = sys.argv[1:]
+  
+  
   create_tables(conn)
-  load_cdt_days(conn)
-  load_cdt_places(conn)
-  load_cdt_low_temps(conn)
+  load_cdt_days(start_date, conn)
+  load_cdt_places(start_date, edited_gps_file, conn)
+  update_day_types(conn)
+  load_cdt_low_temps(start_date, govee_dir, conn)
+
+
 
 def create_tables(conn):
   conn.execute(text(f"drop table if exists cdt_days"))
@@ -54,7 +61,7 @@ def create_tables(conn):
                          index(cdt_day))"""))
   
 
-def load_cdt_days(conn):
+def load_cdt_days(start_date, conn):
   with open("cdt_days.txt", "r") as i: 
     cdt_day = 0
     for line in i.readlines():
@@ -91,7 +98,7 @@ def load_cdt_days(conn):
 
 
   conn.execute(text(f"""update cdt_days
-                        set cdt_date = date_add("2023-07-01", interval cdt_day DAY)"""))
+                        set cdt_date = date_add('{start_date}', interval cdt_day DAY)"""))
 
   conn.execute(text(f"""update cdt_days
                         set day_type = 'zero'
@@ -99,41 +106,19 @@ def load_cdt_days(conn):
 
         
 
-def load_cdt_places(conn):
-  gpx_file = open('cdt_inreach.gpx', 'r')
-  gpx = gpxpy.parse(gpx_file)
-  
-#define start date and place types for resupplies, sidehikes, and trail termini
-  start_date = datetime.strptime('2023-07-02', "%Y-%m-%d").date()
-  resupplies = ['East Glacier', 'Augusta', 'High Divide Outfittr', 'Elliston', 'Anaconda', 'Darby', 'Leadore', 'Lima', 'West Yellowstone', 'Old Faithful', 'Dubois', 'Pinedale', 'Lander', 'Rawlins', 'Riverside-Encampment', 'Steamboat Springs', 'Grand Lake', 'Dillon', 'Breckenridge', 'Twin Lakes', 'Salida', 'Lake City', 'Pagosa Springs', 'Chama', 'Abiquiu', 'Cuba', 'Grants', 'Pietown', "Doc Campbell's Post", 'Silver City', 'Lordsburg']                 
-  sidehikes = ['Thunderbolt Mt', 'Peak 9989', 'Peak 9336', 'Elk Mountain', 'Cottonwood Peak', 'Deadman Pass', 'Taylor Mountain', 'Grand Prismatic Pool', 'Knapsack Col', 'Mt Bonneville SW', 'Lost Ranger Peak', 'James Peak', 'Flora Peak', 'Peak 13208', 'Grays Peak', 'Mt Edwards', 'Argentine Peak', 'Decautur Mountain', 'Sullivan Mtn', 'Geneva Peak', 'Whale Peak', 'Glacier Peak', 'Mt Elbert', 'San Luis Peak', 'Coney Point', 'Alberta Peak', 'Cumbres Pass', 'Mt Taylor', 'Big Hatchet Peak']                 
-  termini = ['Canada', 'Mexico']
-
-
-  for waypoint in gpx.waypoints:
-    cdt_day = waypoint.time.date() - start_date
-    cdt_day = cdt_day.days + 1
-    
-    place_type = 'hitch'
-    if waypoint.name[:3] == 'CDT':
-      place_type = 'camp'
-      cdt_day = waypoint.name[4:]
-    elif waypoint.name.strip() in resupplies:
-      place_type = 'resupply'
-    elif waypoint.name.strip() in sidehikes:
-      place_type = 'sidehike'
-    elif waypoint.name.strip() in termini:
-      place_type = 'terminus'
+def load_cdt_places(start_date, edited_gps_file, conn):
+  with open(edited_gps_file, 'r') as g: 
+    g.readline()     
+    for line in g:
+      line = line.strip()
+      (cdt_day, place, place_type, latitude, longitude) = line.split('\t')
             
-    conn.execute(text(f"""insert into cdt_places
-                          values
-                          (null, {cdt_day}, "{waypoint.name}", "{place_type}", {waypoint.latitude},{ waypoint.longitude})"""))
+      conn.execute(text(f"""insert into cdt_places
+                            values
+                            (null, {cdt_day}, "{place}", "{place_type}", {latitude}, {longitude})"""))
     
-  conn.execute(text(f"""update cdt_places
-                        set place_type = 'town'
-                        where place_type = 'camp'
-                        and cdt_day in (6, 11, 19, 20, 24, 25, 37, 46, 50, 51, 56, 57, 60, 61, 67, 68, 71, 74, 75, 84, 88, 89, 94, 95, 98, 102, 103, 109, 113, 121, 122, 125)"""))
-   
+
+def update_day_types(conn):   
   conn.execute(text(f"""update cdt_days
                         set day_type = 'nearo'
                         where miles between 1 and 20
@@ -145,10 +130,14 @@ def load_cdt_places(conn):
                                         from cdt_places
                                         where place_type = 'town')"""))
 
+  max_cdt_day = conn.execute(text(f"""select max(cdt_day)
+                                      from cdt_days""")).fetchone()[0]
+
   conn.execute(text(f"""update cdt_days
                         set day_type = 'nearo'
                         where miles between 1 and 20
-                        and cdt_day in (1, 130)"""))
+                        and cdt_day in (1, {max_cdt_day})"""))
+
 
   conn.execute(text(f"""update cdt_days
                         set day_type = 'hero'
@@ -160,20 +149,22 @@ def load_cdt_places(conn):
                                             from cdt_places
                                             where place_type = 'camp')"""))
 
-  conn.execute(text(f"""update cdt_days
-                        set day_type = 'hero'
-                        where cdt_day in (41)"""))
+##  conn.execute(text(f"""update cdt_days
+##                        set day_type = 'hero'
+##                        where cdt_day in (41)"""))
+##
+##  conn.execute(text(f"""update cdt_days
+##                        set day_type = 'full'
+##                        where cdt_day in (125)"""))
 
-  conn.execute(text(f"""update cdt_days
-                        set day_type = 'full'
-                        where cdt_day in (125)"""))
 
-
-def load_cdt_low_temps(conn):
+def load_cdt_low_temps(start_date, govee_dir, conn):
   low_temps = {}
-  start_date = datetime.strptime('2023-07-02', "%Y-%m-%d").date()
+  start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
   
-  for govee_file in list(glob.glob('cdt_govee/*.csv')):     
+  govee_file_str = govee_dir + '/*.csv'
+  
+  for govee_file in list(glob.glob(govee_file_str)):     
     with open(govee_file, "r") as g: 
       for line in g.readlines()[1:]:
         line = line.strip()
