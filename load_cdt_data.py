@@ -103,10 +103,11 @@ def load_cdt_places(conn):
   gpx_file = open('cdt_inreach.gpx', 'r')
   gpx = gpxpy.parse(gpx_file)
   
+#define start date and place types for resupplies, sidehikes, and trail termini
   start_date = datetime.strptime('2023-07-02', "%Y-%m-%d").date()
   resupplies = ['East Glacier', 'Augusta', 'High Divide Outfittr', 'Elliston', 'Anaconda', 'Darby', 'Leadore', 'Lima', 'West Yellowstone', 'Old Faithful', 'Dubois', 'Pinedale', 'Lander', 'Rawlins', 'Riverside-Encampment', 'Steamboat Springs', 'Grand Lake', 'Dillon', 'Breckenridge', 'Twin Lakes', 'Salida', 'Lake City', 'Pagosa Springs', 'Chama', 'Abiquiu', 'Cuba', 'Grants', 'Pietown', "Doc Campbell's Post", 'Silver City', 'Lordsburg']                 
   sidehikes = ['Thunderbolt Mt', 'Peak 9989', 'Peak 9336', 'Elk Mountain', 'Cottonwood Peak', 'Deadman Pass', 'Taylor Mountain', 'Grand Prismatic Pool', 'Knapsack Col', 'Mt Bonneville SW', 'Lost Ranger Peak', 'James Peak', 'Flora Peak', 'Peak 13208', 'Grays Peak', 'Mt Edwards', 'Argentine Peak', 'Decautur Mountain', 'Sullivan Mtn', 'Geneva Peak', 'Whale Peak', 'Glacier Peak', 'Mt Elbert', 'San Luis Peak', 'Coney Point', 'Alberta Peak', 'Cumbres Pass', 'Mt Taylor', 'Big Hatchet Peak']                 
-  terminals = ['Canada', 'Mexico']
+  termini = ['Canada', 'Mexico']
 
 
   for waypoint in gpx.waypoints:
@@ -121,8 +122,8 @@ def load_cdt_places(conn):
       place_type = 'resupply'
     elif waypoint.name.strip() in sidehikes:
       place_type = 'sidehike'
-    elif waypoint.name.strip() in terminals:
-      place_type = 'terminal'
+    elif waypoint.name.strip() in termini:
+      place_type = 'terminus'
             
     conn.execute(text(f"""insert into cdt_places
                           values

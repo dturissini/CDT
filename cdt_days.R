@@ -8,7 +8,7 @@ setwd('~/Dropbox/hiking/CDT/CDT_data')
 cdt_days <- dbGetQuery(myCon, "select d.cdt_day, miles, day_type, latitude, longitude
                                from cdt_days d, cdt_places p
                                where d.cdt_day = p.cdt_day
-                               and place_type in ('camp', 'town', 'terminal')
+                               and place_type in ('camp', 'town', 'termini')
                                and ! (place_type = 'terminal' and d.cdt_day = 1)
                                order by d.cdt_day")
 
