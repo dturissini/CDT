@@ -1,6 +1,11 @@
 # CDT
 Scripts for analyzing data I collected on my Continental Divide Trail thru hike.
 
+## Results from my 2023 CDT thru hike
+[Daily plots](https://www.dropbox.com/scl/fi/ax20fo7qp9v07omowwqbo/cdt_days.pdf?rlkey=jo2taz8yf2e0zdyzfg68cxrin&dl=0)
+
+[Map plots](https://www.dropbox.com/scl/fi/cbcabfksuupyqm7wx5ebg/cdt_maps.pdf?rlkey=fom9zbnci9nbhdjiw0fmspk3i&dl=0)
+
 ## Preparing data
 These script process different types of data recorded during the hike and produce two pdfs containing informative plots. There are three main input data files:
 
