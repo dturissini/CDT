@@ -101,28 +101,6 @@ abline(v=mean(cdt_low_temps$low_temp), col='red')
 abline(v=32, col='black')
 text(mean(cdt_low_temps$low_temp) - 3, 7, round(mean(cdt_low_temps$low_temp), 1), col='red')
 
-plot(cdt_low_temps$latitude, cdt_low_temps$low_temp, pch=20, xlab='Latitude', ylab = 'Degrees Fahrenheit', main = 'Low temps by latitude')
-
-temp_cols <- tim.colors(max(round(cdt_low_temps$low_temp)) - min(round(cdt_low_temps$low_temp)))
-plot(cdt_low_temps$cdt_day, cdt_low_temps$latitude, col=temp_cols[round(cdt_low_temps$low_temp) - min(round(cdt_low_temps$low_temp))], pch=20, xlab='CDT day', ylab='Latitude', main = 'Low temps by latitude')
-
-#legend
-day_min <- 6
-day_max <- 12
-latitude_min <- 33
-latitude_max <- 38
-
-latitude_step <- (latitude_max - latitude_min) / length(temp_cols)
-
-for (i in 1:length(temp_cols))
-  {
-  rect(day_min, latitude_min + latitude_step * (i - 1), day_max, latitude_min + latitude_step * i, col=temp_cols[i], border=temp_cols[i])  
-  }
-  
-legend_temps <- seq(min(round(cdt_low_temps$low_temp)), max(round(cdt_low_temps$low_temp)), 5)
-text(day_max + 2, latitude_min + latitude_step * (legend_temps - min(legend_temps)), legend_temps)
-text(mean(c(day_min, day_max)), latitude_max + .5, 'Degrees')
-
 
 plot(cdt_people$cdt_day, cdt_people$num_people, pch=20, xlim=c(0, max(cdt_days$cdt_day)), ylim=c(0, max(cdt_people$num_people)), xlab='CDT day', ylab='People', main='New people by day')
 dev.off()
