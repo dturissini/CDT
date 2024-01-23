@@ -9,9 +9,9 @@ These script process different types of data recorded during the hike and produc
     [PERSON_1]
     [PERSON_2]
 
-    [Precipitation] could be 0-4 values delimited by a"/", for example rain/snow/sleet/hail 
-    [TOTAL_MILES_HIKED] must be prefaced with a T such as T2109. It was handy to track total mileage in this way long the trail to know how far I had already hiked.
-    A separate person's name was typed on each line beneath the day's header line.
+Precipitation could be 0-4 values delimited by a"/", for example rain/snow/sleet/hail 
+TOTAL_MILES_HIKED must be prefaced with a T such as T2109. It was handy to track total mileage in this way long the trail to know how far I had already hiked.
+A separate person's name was typed on each line beneath the day's header line.
     
 **2) GPS data**
     GPS data was collected daily along the hike using a Garmin InReach Mini and exported as a gpx file from the Garmin website after the hike. GPS Waypoints were recorded each night (camping or in town), at resupply locations, at road crossings when hitchhiking into town, and at sidehike destinations. Nightly sleep waypoints used the naming convention "CDT ##" to simplify downstream processing. Note that, unfortunately, after the hike I learned that Garmin does not store elevation or the waypoint icons resulting in the loss of expected data.
