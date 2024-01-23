@@ -133,7 +133,7 @@ dev.off()
 
 
 pdf("cdt_maps.pdf", height=lat_dist / 100, width=long_dist / 100)
-plot(1, type='n', xlim=long_range, ylim=lat_range, bty='n', xaxt='n', yaxt='n', xlab='', ylab='', main = 'Day type')
+plot(1, type='n', xlim=long_range, ylim=lat_range, bty='n', xaxt='n', yaxt='n', xlab='', ylab='', main = 'All days')
 map('state', region = 'Montana', add=T)
 map('state', region = 'Idaho', add=T)
 map('state', region = 'Wyoming', add=T)
@@ -158,6 +158,7 @@ for (i in 1:length(day_types))
   map('state', region = 'Colorado', add=T)
   map('state', region = 'New Mexico', add=T)
   
+  points(cdt_places$longitude[cdt_places$place_type == 'camp'], cdt_places$latitude[cdt_places$place_type == 'camp'], type='l', col=adjustcolor('grey', .6))
   points(cdt_days$longitude[cdt_days$day_type == day_types[i]], cdt_days$latitude[cdt_days$day_type == day_types[i]], col=day_type_cols[i], pch=20, cex=2)
   }
 
@@ -169,6 +170,7 @@ map('state', region = 'Wyoming', add=T)
 map('state', region = 'Colorado', add=T)
 map('state', region = 'New Mexico', add=T)
 
+points(cdt_places$longitude[cdt_places$place_type == 'camp'], cdt_places$latitude[cdt_places$place_type == 'camp'], type='l', col=adjustcolor('grey', .6))
 text(cdt_places$longitude[cdt_places$place_type == 'resupply'], cdt_places$latitude[cdt_places$place_type == 'resupply'], cdt_places$place[cdt_places$place_type == 'resupply'], cex=.6)
 
 
