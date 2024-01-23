@@ -58,7 +58,7 @@ cdt_hitches <- dbGetQuery(myCon, "select p.cdt_day, p.latitude lat_start, p.long
 
 
 long_range <- c(-117, -102)
-lat_range <- c(31, 50)
+lat_range <- c(31, 49)
 
 long_dist <-  2 * 3958.8 * asin(sqrt(cos(mean(lat_range) * pi / 180) * cos(mean(lat_range) * pi / 180) * sin(diff(long_range) / 2 * pi / 180)^2))
 lat_dist <- 2 * 3958.8 * asin(sqrt(sin(diff(lat_range * pi / 180) / 2)^2))
