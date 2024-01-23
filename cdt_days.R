@@ -67,6 +67,8 @@ cdt_hitches <- dbGetQuery(myCon, "select p.cdt_day, p.latitude lat_start, p.long
 #define map latitude and longitude ranges
 long_range <- c(-117, -102)
 lat_range <- c(31, 49)
+states <-c('Montana', 'Idaho', 'Wyoming', 'Colorado', 'New Mexico')
+
 
 #calculate latitude and longitude distances using Haversine formula
 long_dist <-  2 * 3958.8 * asin(sqrt(cos(mean(lat_range) * pi / 180) * cos(mean(lat_range) * pi / 180) * sin(diff(long_range) / 2 * pi / 180)^2))
@@ -122,11 +124,7 @@ dev.off()
 pdf("cdt_maps.pdf", height=lat_dist / 100, width=long_dist / 100)
 #summary of campsites, hitches, and resupplies for all days
 plot(1, type='n', xlim=long_range, ylim=lat_range, bty='n', xaxt='n', yaxt='n', xlab='', ylab='', main = 'All days')
-map('state', region = 'Montana', add=T)
-map('state', region = 'Idaho', add=T)
-map('state', region = 'Wyoming', add=T)
-map('state', region = 'Colorado', add=T)
-map('state', region = 'New Mexico', add=T)
+map('state', region = states, add=T)
 
 points(cdt_days$longitude, cdt_days$latitude, col=day_type_cols[match(cdt_days$day_type, day_types)], pch=20, cex=2)
 arrows(cdt_hitches$long_start, cdt_hitches$lat_start, cdt_hitches$long_end, cdt_hitches$lat_end, length=.05, lwd=2, col='red')
@@ -143,24 +141,15 @@ text(-116.5, 32.5, 'Resupply', adj=0)
 for (i in 1:length(day_types))
   {
   plot(1, type='n', xlim=long_range, ylim=lat_range, bty='n', xaxt='n', yaxt='n', xlab='', ylab='', main = day_type_mains[i])
-  map('state', region = 'Montana', add=T)
-  map('state', region = 'Idaho', add=T)
-  map('state', region = 'Wyoming', add=T)
-  map('state', region = 'Colorado', add=T)
-  map('state', region = 'New Mexico', add=T)
+  map('state', region = states, add=T)
   
   points(cdt_places$longitude[cdt_places$place_type == 'camp'], cdt_places$latitude[cdt_places$place_type == 'camp'], type='l', col=adjustcolor('grey', .6))
   points(cdt_days$longitude[cdt_days$day_type == day_types[i]], cdt_days$latitude[cdt_days$day_type == day_types[i]], col=day_type_cols[i], pch=20, cex=2)
   }
-
-
+  
 #map of resupplies
 plot(1, type='n', xlim=c(-117, -102), ylim=c(31, 50), bty='n', xaxt='n', yaxt='n', xlab='', ylab='', main = 'Resupplies')
-map('state', region = 'Montana', add=T)
-map('state', region = 'Idaho', add=T)
-map('state', region = 'Wyoming', add=T)
-map('state', region = 'Colorado', add=T)
-map('state', region = 'New Mexico', add=T)
+map('state', region = states, add=T)
 
 points(cdt_places$longitude[cdt_places$place_type == 'camp'], cdt_places$latitude[cdt_places$place_type == 'camp'], type='l', col=adjustcolor('grey', .6))
 text(cdt_places$longitude[cdt_places$place_type == 'resupply'], cdt_places$latitude[cdt_places$place_type == 'resupply'], cdt_places$place[cdt_places$place_type == 'resupply'], cex=.6)
@@ -168,11 +157,7 @@ text(cdt_places$longitude[cdt_places$place_type == 'resupply'], cdt_places$latit
 
 #map of sidehikes (may be cluttered)
 plot(1, type='n', xlim=c(-117, -102), ylim=c(31, 50), bty='n', xaxt='n', yaxt='n', xlab='', ylab='', main = 'Sidehikes')
-map('state', region = 'Montana', add=T)
-map('state', region = 'Idaho', add=T)
-map('state', region = 'Wyoming', add=T)
-map('state', region = 'Colorado', add=T)
-map('state', region = 'New Mexico', add=T)
+map('state', region = states, add=T)
 
 points(cdt_places$longitude[cdt_places$place_type == 'camp'], cdt_places$latitude[cdt_places$place_type == 'camp'], type='l', col=adjustcolor('grey', .6))
 text(cdt_places$longitude[cdt_places$place_type == 'sidehike'], cdt_places$latitude[cdt_places$place_type == 'sidehike'], cdt_places$place[cdt_places$place_type == 'sidehike'], cex=.3)
@@ -184,11 +169,7 @@ text(cdt_places$longitude[cdt_places$place_type == 'sidehike'], cdt_places$latit
 temp_cols <- tim.colors(max(round(cdt_low_temps$low_temp)) - min(round(cdt_low_temps$low_temp)))
 
 plot(1, type='n', xlim=long_range, ylim=lat_range, bty='n', xaxt='n', yaxt='n', xlab='', ylab='', main = 'Overnight low temps')
-map('state', region = 'Montana', add=T)
-map('state', region = 'Idaho', add=T)
-map('state', region = 'Wyoming', add=T)
-map('state', region = 'Colorado', add=T)
-map('state', region = 'New Mexico', add=T)
+map('state', region = states, add=T)
 points(cdt_low_temps$longitude, cdt_low_temps$latitude, col=temp_cols[round(cdt_low_temps$low_temp) - min(round(cdt_low_temps$low_temp))], pch=20, cex=2)
 
 
@@ -212,11 +193,7 @@ text(mean(c(longitude_min, longitude_max)), latitude_max + .5, 'Degrees F')
 
 #daily precipitation map
 plot(1, type='n', xlim=c(-117, -102), ylim=c(31, 50), bty='n', xaxt='n', yaxt='n', xlab='', ylab='', main = 'Precipitation')
-map('state', region = 'Montana', add=T)
-map('state', region = 'Idaho', add=T)
-map('state', region = 'Wyoming', add=T)
-map('state', region = 'Colorado', add=T)
-map('state', region = 'New Mexico', add=T)
+map('state', region = states, add=T)
 
 points(cdt_places$longitude[cdt_places$place_type == 'camp'], cdt_places$latitude[cdt_places$place_type == 'camp'], type='l', col=adjustcolor('grey', .6))
 points(cdt_days$longitude[cdt_days$rain == 1], cdt_days$latitude[cdt_days$rain == 1], pch=92, col='blue')
@@ -229,11 +206,7 @@ legend("bottomleft", c('Rain', 'Sleet', 'Snow', 'Hail'), pch=c(92, 47, 0, 1), co
 
 #map of number of new people met each day
 plot(1, type='n', xlim=long_range, ylim=lat_range, bty='n', xaxt='n', yaxt='n', xlab='', ylab='', main = 'New people by day')
-map('state', region = 'Montana', add=T)
-map('state', region = 'Idaho', add=T)
-map('state', region = 'Wyoming', add=T)
-map('state', region = 'Colorado', add=T)
-map('state', region = 'New Mexico', add=T)
+map('state', region = states, add=T)
 
 people_cols = tim.colors(max(cdt_people$num_people))
 points(cdt_people$longitude, cdt_people$latitude, pch=20, col=adjustcolor(people_cols[cdt_people$num_people], .6), cex=cdt_people$num_people / 2)
