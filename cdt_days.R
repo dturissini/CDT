@@ -127,10 +127,10 @@ plot(1, type='n', xlim=long_range, ylim=lat_range, bty='n', xaxt='n', yaxt='n', 
 map('state', region = states, add=T)
 
 points(cdt_days$longitude, cdt_days$latitude, col=day_type_cols[match(cdt_days$day_type, day_types)], pch=20, cex=2)
+points(cdt_places$longitude[cdt_places$place_type == 'resupply'], cdt_places$latitude[cdt_places$place_type == 'resupply'], pch='x')
 arrows(cdt_hitches$long_start[cdt_hitches$place_type == 'hitch'], cdt_hitches$lat_start[cdt_hitches$place_type == 'hitch'], cdt_hitches$long_end[cdt_hitches$place_type == 'hitch'], cdt_hitches$lat_end[cdt_hitches$place_type == 'hitch'], length=.05, lwd=2, col='red')
 arrows(cdt_hitches$long_start[cdt_hitches$place_type == 'bus'], cdt_hitches$lat_start[cdt_hitches$place_type == 'bus'], cdt_hitches$long_end[cdt_hitches$place_type == 'bus'], cdt_hitches$lat_end[cdt_hitches$place_type == 'bus'], length=.05, lwd=2, col='gold')
 arrows(cdt_hitches$long_start[cdt_hitches$place_type == 'train'], cdt_hitches$lat_start[cdt_hitches$place_type == 'train'], cdt_hitches$long_end[cdt_hitches$place_type == 'train'], cdt_hitches$lat_end[cdt_hitches$place_type == 'train'], length=.05, lwd=2, col='purple')
-points(cdt_places$longitude[cdt_places$place_type == 'resupply'], cdt_places$latitude[cdt_places$place_type == 'resupply'], pch='x')
 
 legend("bottomleft", day_type_mains, fill=day_type_cols, border=day_type_cols, bty='n')
 arrows(-117.5, 34, -117, 34, length=.05, lwd=2, col='red')
