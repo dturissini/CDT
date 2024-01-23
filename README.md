@@ -4,6 +4,7 @@ Scripts for analyzing data I collected on my Continental Divide Trail thru hike.
 These script process different types of data recorded during the hike and produce two pdfs containing informative plots. There are three main input data files:
 
 **1) Day specific data**
+
     This information was collected daily along the hike. For simplicity data entry was done in the Notes app on an iPhone and saved as a text file after the hike. Information was structured to enable easier parsing and contained: the day on trail, miles hiked that day, precipitation encountered, total miles hiked to date, and new people met that day. Only day on trail and miles hiked that day were requried, with the other data being optional. The data was structured as follows:
     CDT_DAY MILES_HIKED [PRECIPITATION] [TOTAL_MILES_HIKED]
     [PERSON_1]
@@ -14,9 +15,11 @@ TOTAL_MILES_HIKED must be prefaced with a T such as T2109. It was handy to track
 A separate person's name was typed on each line beneath the day's header line.
     
 **2) GPS data**
+
     GPS data was collected daily along the hike using a Garmin InReach Mini and exported as a gpx file from the Garmin website after the hike. GPS Waypoints were recorded each night (camping or in town), at resupply locations, at road crossings when hitchhiking into town, and at sidehike destinations. Nightly sleep waypoints used the naming convention "CDT ##" to simplify downstream processing. Note that, unfortunately, after the hike I learned that Garmin does not store elevation or the waypoint icons resulting in the loss of expected data.
 
 **3) Temperature data**
+
     Temperature was recorded along the hike using a 1 oz GoVee thermometer. The thermometer was either hung outside my tarp or at least placed away from my body at night. Temperature data was exported from the GoVee app on an iPhone after the hike.
   
 
