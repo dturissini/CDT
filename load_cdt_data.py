@@ -145,17 +145,12 @@ def update_day_types(conn):
                         and cdt_day in (select cdt_day
                                         from cdt_places
                                         where place_type = 'resupply')
-                        and cdt_day - 1 in (select cdt_day
+                        and cdt_day not in (select cdt_day
                                             from cdt_places
-                                            where place_type = 'camp')"""))
-
-##  conn.execute(text(f"""update cdt_days
-##                        set day_type = 'hero'
-##                        where cdt_day in (41)"""))
-##
-##  conn.execute(text(f"""update cdt_days
-##                        set day_type = 'full'
-##                        where cdt_day in (125)"""))
+                                            where place_type = 'town')
+                        and cdt_day - 1 not in (select cdt_day
+                                                from cdt_places
+                                                where place_type = 'town')"""))
 
 
 def load_cdt_low_temps(start_date, govee_dir, conn):
