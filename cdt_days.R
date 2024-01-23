@@ -187,7 +187,7 @@ map('state', region = 'Idaho', add=T)
 map('state', region = 'Wyoming', add=T)
 map('state', region = 'Colorado', add=T)
 map('state', region = 'New Mexico', add=T)
-points(cdt_low_temps$longitude, cdt_low_temps$latitude, col=temp_cols[round(cdt_low_temps$low_temp) - min(round(cdt_low_temps$low_temp))], pch=20, cex=.2)
+points(cdt_low_temps$longitude, cdt_low_temps$latitude, col=temp_cols[round(cdt_low_temps$low_temp) - min(round(cdt_low_temps$low_temp))], pch=20, cex=2)
 
 
 #legend
