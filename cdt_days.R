@@ -177,6 +177,17 @@ points(cdt_places$longitude[cdt_places$place_type == 'camp'], cdt_places$latitud
 text(cdt_places$longitude[cdt_places$place_type == 'resupply'], cdt_places$latitude[cdt_places$place_type == 'resupply'], cdt_places$place[cdt_places$place_type == 'resupply'], cex=.6)
 
 
+plot(1, type='n', xlim=c(-117, -102), ylim=c(31, 50), bty='n', xaxt='n', yaxt='n', xlab='', ylab='', main = 'Sidehikes')
+map('state', region = 'Montana', add=T)
+map('state', region = 'Idaho', add=T)
+map('state', region = 'Wyoming', add=T)
+map('state', region = 'Colorado', add=T)
+map('state', region = 'New Mexico', add=T)
+
+points(cdt_places$longitude[cdt_places$place_type == 'camp'], cdt_places$latitude[cdt_places$place_type == 'camp'], type='l', col=adjustcolor('grey', .6))
+text(cdt_places$longitude[cdt_places$place_type == 'sidehike'], cdt_places$latitude[cdt_places$place_type == 'sidehike'], cdt_places$place[cdt_places$place_type == 'sidehike'], cex=.3)
+
+
 
 
 temp_cols <- tim.colors(max(round(cdt_low_temps$low_temp)) - min(round(cdt_low_temps$low_temp)))
