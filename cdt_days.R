@@ -3,9 +3,11 @@ library(RMySQL)
 library(fields)
 library(maps)
 
+#connect to mysql using credentials stored in .my.cnf file
 myCon <- dbConnect(dbDriver("MySQL"), host = "localhost", default.file = paste("/Users/", Sys.getenv("USER"), "/.my.cnf", sep=''), dbname = "cdt")
 
 
+#get per day info including sleeping location and termini
 cdt_days <- dbGetQuery(myCon, "select d.cdt_day, miles, day_type, latitude, longitude, rain, snow, sleet, hail
                                from cdt_days d, cdt_places p
                                where d.cdt_day = p.cdt_day
@@ -13,16 +15,19 @@ cdt_days <- dbGetQuery(myCon, "select d.cdt_day, miles, day_type, latitude, long
                                and ! (place_type = 'terminal' and d.cdt_day = 1)
                                order by d.cdt_day")
 
+
 cdt_places <- dbGetQuery(myCon, "select cdt_day, place, place_type, latitude, longitude
                                  from cdt_places
                                  order by cdt_day")
 
+#low temps for nights spent camping 
 cdt_low_temps <- dbGetQuery(myCon, "select d.cdt_day, low_temp, latitude, longitude
                                     from cdt_days d, cdt_places p
                                     where d.cdt_day = p.cdt_day
                                     and place_type = 'camp'                   
                                     order by cdt_day")
 
+#number of new people met each day and sleeping location
 cdt_people <- dbGetQuery(myCon, "select p.cdt_day, latitude, longitude, num_people
                                  from cdt_places p, (select cdt_day, count(*) num_people
                                                      from cdt_people
@@ -31,6 +36,8 @@ cdt_people <- dbGetQuery(myCon, "select p.cdt_day, latitude, longitude, num_peop
                                  and place_type in ('camp', 'town')                 
                                  order by cdt_day")
 
+#hitchhiking start and end locations. The first query selects hitches into towns where you did not stay, the second query selects hitches into towns
+#where you stayed the night, and the third query selects hitches from town back to a different location than the one where you hitched into town.
 cdt_hitches <- dbGetQuery(myCon, "select p.cdt_day, p.latitude lat_start, p.longitude long_start, p2.latitude lat_end, p2.longitude long_end
                                   from cdt_places p, cdt_places p2
                                   where p.cdt_day = p2.cdt_day
@@ -55,26 +62,27 @@ cdt_hitches <- dbGetQuery(myCon, "select p.cdt_day, p.latitude lat_start, p.long
                                                        from cdt_places
                                                        where place_type in ('town', 'resupply'))
                                   order by cdt_day")                                
-
-
+                                  
+                                  
+#define map latitude and longitude ranges
 long_range <- c(-117, -102)
 lat_range <- c(31, 49)
 
+#calculate latitude and longitude distances using Haversine formula
 long_dist <-  2 * 3958.8 * asin(sqrt(cos(mean(lat_range) * pi / 180) * cos(mean(lat_range) * pi / 180) * sin(diff(long_range) / 2 * pi / 180)^2))
 lat_dist <- 2 * 3958.8 * asin(sqrt(sin(diff(lat_range * pi / 180) / 2)^2))
 
-
+#define day types, their plotting labels, and respective colors
 day_types <- c('full', 'zero', 'nearo', 'hero')
 day_type_mains <- c('Full days', 'Zeroes', 'Nearos', 'Heroes')
 day_type_cols <- adjustcolor(c('black', 'blue', 'orange', 'green'), .6)
 
 
-
+#day based plots
 pdf("cdt_days.pdf", height=10, width=10)
 #miles per day
 plot(cdt_days$cdt_day, cdt_days$miles, pch=20, col=day_type_cols[match(cdt_days$day_type, day_types)], xlab='CDT days', ylab='Miles', main='CDT miles per day')
 legend("topright", day_type_mains, fill=day_type_cols, border=day_type_cols)
-
 
 mile_matrix <- c()
 for (i in 1:length(day_types))
@@ -102,6 +110,7 @@ abline(v=32, col='black')
 text(mean(cdt_low_temps$low_temp) - 3, 7, round(mean(cdt_low_temps$low_temp), 1), col='red')
 
 
+#new people met each day
 plot(cdt_people$cdt_day, cdt_people$num_people, pch=20, xlim=c(0, max(cdt_days$cdt_day)), ylim=c(0, max(cdt_people$num_people)), xlab='CDT day', ylab='People', main='New people by day')
 dev.off()
 
@@ -109,8 +118,9 @@ dev.off()
 
 
 
-
+#map based plots
 pdf("cdt_maps.pdf", height=lat_dist / 100, width=long_dist / 100)
+#summary of campsites, hitches, and resupplies for all days
 plot(1, type='n', xlim=long_range, ylim=lat_range, bty='n', xaxt='n', yaxt='n', xlab='', ylab='', main = 'All days')
 map('state', region = 'Montana', add=T)
 map('state', region = 'Idaho', add=T)
@@ -129,7 +139,7 @@ text(-117.25, 32.5, 'x')
 text(-116.5, 32.5, 'Resupply', adj=0)
 
 
-
+#separate map plots for each day type
 for (i in 1:length(day_types))
   {
   plot(1, type='n', xlim=long_range, ylim=lat_range, bty='n', xaxt='n', yaxt='n', xlab='', ylab='', main = day_type_mains[i])
@@ -144,6 +154,7 @@ for (i in 1:length(day_types))
   }
 
 
+#map of resupplies
 plot(1, type='n', xlim=c(-117, -102), ylim=c(31, 50), bty='n', xaxt='n', yaxt='n', xlab='', ylab='', main = 'Resupplies')
 map('state', region = 'Montana', add=T)
 map('state', region = 'Idaho', add=T)
@@ -155,6 +166,7 @@ points(cdt_places$longitude[cdt_places$place_type == 'camp'], cdt_places$latitud
 text(cdt_places$longitude[cdt_places$place_type == 'resupply'], cdt_places$latitude[cdt_places$place_type == 'resupply'], cdt_places$place[cdt_places$place_type == 'resupply'], cex=.6)
 
 
+#map of sidehikes (may be cluttered)
 plot(1, type='n', xlim=c(-117, -102), ylim=c(31, 50), bty='n', xaxt='n', yaxt='n', xlab='', ylab='', main = 'Sidehikes')
 map('state', region = 'Montana', add=T)
 map('state', region = 'Idaho', add=T)
@@ -167,7 +179,8 @@ text(cdt_places$longitude[cdt_places$place_type == 'sidehike'], cdt_places$latit
 
 
 
-
+#overnight low temperature map
+#define color palette based on temperature range
 temp_cols <- tim.colors(max(round(cdt_low_temps$low_temp)) - min(round(cdt_low_temps$low_temp)))
 
 plot(1, type='n', xlim=long_range, ylim=lat_range, bty='n', xaxt='n', yaxt='n', xlab='', ylab='', main = 'Overnight low temps')
@@ -179,7 +192,7 @@ map('state', region = 'New Mexico', add=T)
 points(cdt_low_temps$longitude, cdt_low_temps$latitude, col=temp_cols[round(cdt_low_temps$low_temp) - min(round(cdt_low_temps$low_temp))], pch=20, cex=2)
 
 
-#legend
+#plot custom legend
 longitude_min <- -115
 longitude_max <- -114
 latitude_min <- 33
@@ -194,10 +207,10 @@ for (i in 1:length(temp_cols))
   
 legend_temps <- seq(min(round(cdt_low_temps$low_temp)), max(round(cdt_low_temps$low_temp)), 5)
 text(longitude_max + .5, latitude_min + latitude_step * (legend_temps - min(legend_temps)), legend_temps)
-text(mean(c(longitude_min, longitude_max)), latitude_max + .5, 'Degrees')
+text(mean(c(longitude_min, longitude_max)), latitude_max + .5, 'Degrees F')
 
 
-
+#daily precipitation map
 plot(1, type='n', xlim=c(-117, -102), ylim=c(31, 50), bty='n', xaxt='n', yaxt='n', xlab='', ylab='', main = 'Precipitation')
 map('state', region = 'Montana', add=T)
 map('state', region = 'Idaho', add=T)
@@ -214,7 +227,7 @@ points(cdt_days$longitude[cdt_days$hail == 1], cdt_days$latitude[cdt_days$hail =
 legend("bottomleft", c('Rain', 'Sleet', 'Snow', 'Hail'), pch=c(92, 47, 0, 1), col=c('blue', 'blue', 'black', 'black'), pt.cex=c(1,1,1,2))
 
 
-
+#map of number of new people met each day
 plot(1, type='n', xlim=long_range, ylim=lat_range, bty='n', xaxt='n', yaxt='n', xlab='', ylab='', main = 'New people by day')
 map('state', region = 'Montana', add=T)
 map('state', region = 'Idaho', add=T)

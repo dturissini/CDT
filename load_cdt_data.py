@@ -11,24 +11,25 @@ import glob
 import sys
 import getpass
 
-#python3 load_cdt_data.py 2023-07-02 cdt_gps_edited.txt cdt_govee
+#python3 load_cdt_data.py 2023-07-02 cdt_days.txt cdt_gps_edited.txt cdt_govee
 
 
 def main():
+  #connect to mysql using credentials stored in .my.cnf file
   engine = create_engine('mysql+mysqlconnector://localhost/cdt', connect_args={'read_default_file': '/Users/' + getpass.getuser() + '/.my.cnf'})
   conn = engine.connect()
   
-  (start_date, edited_gps_file, govee_dir) = sys.argv[1:]
+  (start_date, cdt_days_file, edited_gps_file, govee_dir) = sys.argv[1:]
   
   
   create_tables(conn)
-  load_cdt_days(start_date, conn)
+  load_cdt_days(start_date, cdt_days_file, conn)
   load_cdt_places(start_date, edited_gps_file, conn)
   update_day_types(conn)
   load_cdt_low_temps(start_date, govee_dir, conn)
 
 
-
+#create table to store cdt data
 def create_tables(conn):
   conn.execute(text(f"drop table if exists cdt_days"))
   conn.execute(text(f"""create table cdt_days 
@@ -60,9 +61,10 @@ def create_tables(conn):
                          longitude decimal(10,7),
                          index(cdt_day))"""))
   
-
-def load_cdt_days(start_date, conn):
-  with open("cdt_days.txt", "r") as i: 
+  
+#load day specific data recorded along the hike
+def load_cdt_days(start_date, cdt_days_file, conn):
+  with open(cdt_days_file, "r") as i: 
     cdt_day = 0
     for line in i.readlines():
       line = line.strip()
@@ -106,6 +108,7 @@ def load_cdt_days(start_date, conn):
 
         
 
+#load place data from edited gps file
 def load_cdt_places(start_date, edited_gps_file, conn):
   with open(edited_gps_file, 'r') as g: 
     g.readline()     
@@ -118,6 +121,7 @@ def load_cdt_places(start_date, edited_gps_file, conn):
                             (null, {cdt_day}, "{place}", "{place_type}", {latitude}, {longitude})"""))
     
 
+#update day_type for nearos and heroes
 def update_day_types(conn):   
   conn.execute(text(f"""update cdt_days
                         set day_type = 'nearo'
@@ -152,7 +156,7 @@ def update_day_types(conn):
                                                 from cdt_places
                                                 where place_type = 'town')"""))
 
-
+#load overnight low temp data from govee data files
 def load_cdt_low_temps(start_date, govee_dir, conn):
   low_temps = {}
   start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
