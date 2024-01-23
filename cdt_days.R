@@ -6,7 +6,7 @@ library(maps)
 myCon <- dbConnect(dbDriver("MySQL"), host = "localhost", default.file = paste("/Users/", Sys.getenv("USER"), "/.my.cnf", sep=''), dbname = "cdt")
 
 
-cdt_days <- dbGetQuery(myCon, "select d.cdt_day, miles, day_type, latitude, longitude
+cdt_days <- dbGetQuery(myCon, "select d.cdt_day, miles, day_type, latitude, longitude, rain, snow, sleet, hail
                                from cdt_days d, cdt_places p
                                where d.cdt_day = p.cdt_day
                                and place_type in ('camp', 'town', 'termini')
@@ -218,6 +218,22 @@ legend_temps <- seq(min(round(cdt_low_temps$low_temp)), max(round(cdt_low_temps$
 text(longitude_max + .5, latitude_min + latitude_step * (legend_temps - min(legend_temps)), legend_temps)
 text(mean(c(longitude_min, longitude_max)), latitude_max + .5, 'Degrees')
 
+
+
+plot(1, type='n', xlim=c(-117, -102), ylim=c(31, 50), bty='n', xaxt='n', yaxt='n', xlab='', ylab='', main = 'Precipitation')
+map('state', region = 'Montana', add=T)
+map('state', region = 'Idaho', add=T)
+map('state', region = 'Wyoming', add=T)
+map('state', region = 'Colorado', add=T)
+map('state', region = 'New Mexico', add=T)
+
+points(cdt_places$longitude[cdt_places$place_type == 'camp'], cdt_places$latitude[cdt_places$place_type == 'camp'], type='l', col=adjustcolor('grey', .6))
+points(cdt_days$longitude[cdt_days$rain == 1], cdt_days$latitude[cdt_days$rain == 1], pch=92, col='blue')
+points(cdt_days$longitude[cdt_days$sleet == 1], cdt_days$latitude[cdt_days$sleet == 1], pch=47, col='blue')
+points(cdt_days$longitude[cdt_days$snow == 1], cdt_days$latitude[cdt_days$snow == 1], pch=0, col='black')
+points(cdt_days$longitude[cdt_days$hail == 1], cdt_days$latitude[cdt_days$hail == 1], pch=1, col='black', cex=2)
+
+legend("bottomleft", c('Rain', 'Sleet', 'Snow', 'Hail'), pch=c(92, 47, 0, 1), col=c('blue', 'blue', 'black', 'black'), pt.cex=c(1,1,1,2))
 
 
 
