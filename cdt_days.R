@@ -94,7 +94,7 @@ for (i in 1:length(day_types))
   }
 
 barplot(mile_matrix, beside=F, col=day_type_cols, space=0, border=NA, xlab='Miles', ylab='Days', main='CDT miles per day')
-legend("topright", day_types, fill=day_type_cols, border=day_type_cols)
+legend("topright", day_type_mains, fill=day_type_cols, border=day_type_cols)
 axis(1, at=0.5 + seq(0, max(cdt_days$miles) + 5, 5), seq(0, max(cdt_days$miles) + 5, 5))
 
 for (i in 1:length(day_types))
