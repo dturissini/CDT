@@ -142,10 +142,13 @@ map('state', region = 'New Mexico', add=T)
 
 points(cdt_days$longitude, cdt_days$latitude, col=day_type_cols[match(cdt_days$day_type, day_types)], pch=20, cex=2)
 arrows(cdt_hitches$long_start, cdt_hitches$lat_start, cdt_hitches$long_end, cdt_hitches$lat_end, length=.05, lwd=2, col='red')
+points(cdt_places$longitude[cdt_places$place_type == 'resupply'], cdt_places$latitude[cdt_places$place_type == 'resupply'], pch='x')
 
-legend("bottomleft", day_type_mains, fill=day_type_cols, border=day_type_cols)
-arrows(-117, 33, -116, 33, length=.05, lwd=2, col='red')
-text(-116.5, 33.5, 'Hitchhike', col='red')
+legend("bottomleft", day_type_mains, fill=day_type_cols, border=day_type_cols, bty='n')
+arrows(-117.5, 33, -117, 33, length=.05, lwd=2, col='red')
+text(-116.5, 33, 'Hitchhike', col='red', adj=0)
+text(-117.25, 32.5, 'x')
+text(-116.5, 32.5, 'Resupply', adj=0)
 
 
 
@@ -184,7 +187,7 @@ map('state', region = 'Idaho', add=T)
 map('state', region = 'Wyoming', add=T)
 map('state', region = 'Colorado', add=T)
 map('state', region = 'New Mexico', add=T)
-points(cdt_low_temps$longitude, cdt_low_temps$latitude, col=temp_cols[round(cdt_low_temps$low_temp) - min(round(cdt_low_temps$low_temp))], pch=20, cex=2)
+points(cdt_low_temps$longitude, cdt_low_temps$latitude, col=temp_cols[round(cdt_low_temps$low_temp) - min(round(cdt_low_temps$low_temp))], pch=20, cex=.2)
 
 
 #legend
