@@ -36,12 +36,12 @@ cdt_people <- dbGetQuery(myCon, "select p.cdt_day, latitude, longitude, num_peop
                                  and place_type in ('camp', 'town')                 
                                  order by cdt_day")
 
-#hitchhiking, bus, and train start and end locations. The first query selects hitches into towns where you did not stay, the second query selects hitches into towns
-#where you stayed the night, and the third query selects hitches from town back to a different location than the one where you hitched into town.
+#hitchhiking, bus, and train start and end locations. The first query selects hitches into towns where you did not stay, the second query selects hitches or rides into towns
+#where you stayed the night, and the third query selects hitches or rides from town back to a different location than the one where you hitched or rode into town.
 cdt_hitches <- dbGetQuery(myCon, "select p.cdt_day, p.place_type, p.latitude lat_start, p.longitude long_start, p2.latitude lat_end, p2.longitude long_end
                                   from cdt_places p, cdt_places p2
                                   where p.cdt_day = p2.cdt_day
-                                  and p.place_type in ('hitch', 'bus', 'train')
+                                  and p.place_type in ('hitch', 'car', 'bus', 'train')
                                   and p2.place_type = 'resupply'
                                   and p.cdt_day not in (select cdt_day 
                                                        from cdt_places
@@ -50,13 +50,13 @@ cdt_hitches <- dbGetQuery(myCon, "select p.cdt_day, p.place_type, p.latitude lat
                                   select p.cdt_day, p.place_type, p.latitude, p.longitude, p2.latitude, p2.longitude
                                   from cdt_places p, cdt_places p2
                                   where p.cdt_day = p2.cdt_day
-                                  and p.place_type in ('hitch', 'bus', 'train')
+                                  and p.place_type in ('hitch', 'car', 'bus', 'train')
                                   and p2.place_type = 'town'
                                   union all
                                   select p.cdt_day, p.place_type, p2.latitude, p2.longitude, p.latitude, p.longitude
                                   from cdt_places p, cdt_places p2
                                   where p.cdt_day = p2.cdt_day + 1
-                                  and p.place_type in ('hitch', 'bus', 'train')
+                                  and p.place_type in ('hitch', 'car', 'bus', 'train')
                                   and p2.place_type = 'town'
                                   and p.cdt_day not in (select cdt_day 
                                                        from cdt_places
@@ -122,21 +122,24 @@ dev.off()
 
 #map based plots
 pdf("cdt_maps.pdf", height=lat_dist / 100, width=long_dist / 100)
-#summary of campsites, hitches, buses, trains, and resupplies for all days
+#summary of campsites, hitches, cars, buses, trains, and resupplies for all days
 plot(1, type='n', xlim=long_range, ylim=lat_range, bty='n', xaxt='n', yaxt='n', xlab='', ylab='', main = 'All days')
 map('state', region = states, add=T)
 
 points(cdt_days$longitude, cdt_days$latitude, col=day_type_cols[match(cdt_days$day_type, day_types)], pch=20, cex=2)
 points(cdt_places$longitude[cdt_places$place_type == 'resupply'], cdt_places$latitude[cdt_places$place_type == 'resupply'], pch='x')
 arrows(cdt_hitches$long_start[cdt_hitches$place_type == 'hitch'], cdt_hitches$lat_start[cdt_hitches$place_type == 'hitch'], cdt_hitches$long_end[cdt_hitches$place_type == 'hitch'], cdt_hitches$lat_end[cdt_hitches$place_type == 'hitch'], length=.05, lwd=2, col='red')
+arrows(cdt_hitches$long_start[cdt_hitches$place_type == 'car'], cdt_hitches$lat_start[cdt_hitches$place_type == 'car'], cdt_hitches$long_end[cdt_hitches$place_type == 'car'], cdt_hitches$lat_end[cdt_hitches$place_type == 'car'], length=.05, lwd=2, col='grey')
 arrows(cdt_hitches$long_start[cdt_hitches$place_type == 'bus'], cdt_hitches$lat_start[cdt_hitches$place_type == 'bus'], cdt_hitches$long_end[cdt_hitches$place_type == 'bus'], cdt_hitches$lat_end[cdt_hitches$place_type == 'bus'], length=.05, lwd=2, col='gold')
 arrows(cdt_hitches$long_start[cdt_hitches$place_type == 'train'], cdt_hitches$lat_start[cdt_hitches$place_type == 'train'], cdt_hitches$long_end[cdt_hitches$place_type == 'train'], cdt_hitches$lat_end[cdt_hitches$place_type == 'train'], length=.05, lwd=2, col='purple')
 
 legend("bottomleft", day_type_mains, fill=day_type_cols, border=day_type_cols, bty='n')
-arrows(-117.5, 34, -117, 34, length=.05, lwd=2, col='red')
+arrows(-117.5, 34.5, -117, 34.5, length=.05, lwd=2, col='red')
+arrows(-117.5, 34, -117, 34, length=.05, lwd=2, col='grey')
 arrows(-117.5, 33.5, -117, 33.5, length=.05, lwd=2, col='gold')
 arrows(-117.5, 33, -117, 33, length=.05, lwd=2, col='purple')
-text(-116.5, 34, 'Hitchhike', col='red', adj=0)
+text(-116.5, 34.5, 'Hitchhike', col='red', adj=0)
+text(-116.5, 34, 'Car', col='grey', adj=0)
 text(-116.5, 33.5, 'Bus', col='gold', adj=0)
 text(-116.5, 33, 'Train', col='purple', adj=0)
 text(-117.25, 32.5, 'x')
