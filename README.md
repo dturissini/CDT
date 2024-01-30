@@ -20,7 +20,7 @@ These script process different types of data recorded during the hike and produc
    - A separate person's name was typed on each line beneath the day's header line.
     
 2. GPS data
-   - GPS data was collected daily along the hike using a Garmin InReach Mini and exported as a gpx file from the Garmin website after the hike. GPS Waypoints were recorded each night (camping or in town), at resupply locations, at road crossings when hitchhiking (or taking a bus or train) into town, and at sidehike destinations. Nightly sleep waypoints used the naming convention "CDT ##" to simplify downstream processing. Note that, unfortunately, after the hike I learned that Garmin does not store elevation or the waypoint icons resulting in the loss of expected data.
+   - GPS data was collected daily along the hike using a Garmin InReach Mini and exported as a gpx file from the Garmin website after the hike. GPS Waypoints were recorded each night (camping or in town), at resupply locations, at road crossings when hitchhiking (or taking a bus, train, or prearranged car) into town, and at sidehike destinations. Nightly sleep waypoints used the naming convention "CDT ##" to simplify downstream processing. Note that, unfortunately, after the hike I learned that Garmin does not store elevation or the waypoint icons resulting in the loss of expected data.
 
 3. Temperature data
    - Temperature was recorded along the hike using a 1 oz GoVee thermometer. The thermometer was either hung outside my tarp or at least placed away from my body at night. Temperature data was exported from the GoVee app on an iPhone after the hike.
@@ -50,6 +50,7 @@ The data is processed in several steps:
    - Manually edit the tab-delimited gpx file in a text editor or spreadsheet program. to esnure the day on trail and place types are correct. Note that place type information was recorded as the waypoint icon on trail, but unfortunately, Garmin does not include that information in the gpx. Additionally, the day may need to be changed if the waypoint was added at a later date on the trail. Supported place_types include:
       - bus: bus stop where a bus was taken into town
       - camp: campsite
+      - car: road crossing where you got a prearranged ride into town from friends, family, or a hiker shuttle
       - hitch: road crossing where you hitchhiked into town
       - resupply: location of store or post office where you resupplied
       - sidehike: destination of sidehike off of main trail
@@ -67,7 +68,7 @@ The data is processed in several steps:
      - cdt_days.pdf
        - Contains day-specific summaries regarding mileage, low temperatures, and new people met.
      - cdt_maps.pdf
-       - Contains map plots showing the route including sleeping locations, resupplies, hitchhikes, buses, trains, low temperatures, precipitation, and new people met each day. Separate plots are also made based on day_type:
+       - Contains map plots showing the route including sleeping locations, resupplies, hitchhikes, cars, buses, trains, low temperatures, precipitation, and new people met each day. Separate plots are also made based on day_type:
          - full day - entire day spent hiking
          - nearo - near zero day where only part of the day was spent hiking
          - hero - resupply day where you went in and out of town and kept hiking
