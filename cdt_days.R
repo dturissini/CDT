@@ -177,12 +177,12 @@ text(cdt_places$longitude[cdt_places$place_type == 'sidehike'], cdt_places$latit
 plot(1, type='n', xlim=c(-117, -102), ylim=c(31, 50), bty='n', xaxt='n', yaxt='n', xlab='', ylab='', main = 'Amount of each day hiking with other people')
 map('state', region = states, add=T)
 
-points(cdt_days$longitude[cdt_days$hike_friend_day_status == 'all' & cdt_days$day_type != 'zero'], cdt_days$latitude[cdt_days$hike_friend_day_status == 'all' & cdt_days$day_type != 'zero'], pch=20, cex=2, col='red')
-points(cdt_days$longitude[cdt_days$hike_friend_day_status == 'most' & cdt_days$day_type != 'zero'], cdt_days$latitude[cdt_days$hike_friend_day_status == 'most' & cdt_days$day_type != 'zero'], pch=20, cex=2, col='purple')
-points(cdt_days$longitude[cdt_days$hike_friend_day_status == 'less' & cdt_days$day_type != 'zero'], cdt_days$latitude[cdt_days$hike_friend_day_status == 'less' & cdt_days$day_type != 'zero'], pch=20, cex=2, col='blue')
-points(cdt_days$longitude[cdt_days$hike_friend_day_status == 'none' & cdt_days$day_type != 'zero'], cdt_days$latitude[cdt_days$hike_friend_day_status == 'none' & cdt_days$day_type != 'zero'], pch=20, cex=2, col='darkgrey')
+points(cdt_days$longitude[cdt_days$hike_friend_day_status == 'all' & cdt_days$day_type != 'zero'], cdt_days$latitude[cdt_days$hike_friend_day_status == 'all' & cdt_days$day_type != 'zero'], pch=20, cex=2, col=adjustcolor('red', .6))
+points(cdt_days$longitude[cdt_days$hike_friend_day_status == 'most' & cdt_days$day_type != 'zero'], cdt_days$latitude[cdt_days$hike_friend_day_status == 'most' & cdt_days$day_type != 'zero'], pch=20, cex=2, col=adjustcolor('purple', .6))
+points(cdt_days$longitude[cdt_days$hike_friend_day_status == 'less' & cdt_days$day_type != 'zero'], cdt_days$latitude[cdt_days$hike_friend_day_status == 'less' & cdt_days$day_type != 'zero'], pch=20, cex=2, col=adjustcolor('blue', .6))
+points(cdt_days$longitude[cdt_days$hike_friend_day_status == 'none' & cdt_days$day_type != 'zero'], cdt_days$latitude[cdt_days$hike_friend_day_status == 'none' & cdt_days$day_type != 'zero'], pch=20, cex=2, col=adjustcolor('darkgrey', .6))
 
-legend("bottomleft", c('All', 'More than half', 'Less than half', 'None'), fill=c('red', 'purple', 'blue', 'darkgrey'), border=NA)
+legend("bottomleft", c('All', 'More than half', 'Less than half', 'None'), fill=adjustcolor(c('red', 'purple', 'blue', 'darkgrey'), .6), border=NA)
 
 
 
