@@ -11,10 +11,11 @@ These script process different types of data recorded during the hike and produc
 
 1. Day specific data
    - This information was collected daily along the hike. For simplicity data entry was done in the Notes app on an iPhone and saved as a text file after the hike. Information was structured to enable easier parsing and contained: the day on trail, miles hiked that day, precipitation encountered, total miles hiked to date, and new people met that day. Only day on trail and miles hiked that day were requried, with the other data being optional. The data was structured as follows:
-    CDT_DAY MILES_HIKED [PRECIPITATION] [TOTAL_MILES_HIKED]
+    CDT_DAY MILES_HIKED HIKING_WITH_OTHERS [PRECIPITATION] [TOTAL_MILES_HIKED]
     [PERSON_1]
     [PERSON_2]
-
+    
+   - HIKING_WITH_OTHERS is records roughly how much of the day was spent hiking with other people: all, less, most, none. less and most roughly correspond to less than half the day and more than half the day
    - Precipitation could be 0-4 values delimited by a"/", for example rain/snow/sleet/hail 
    - TOTAL_MILES_HIKED must be prefaced with a T such as T2109. It was handy to track total mileage in this way long the trail to know how far I had already hiked.
    - A separate person's name was typed on each line beneath the day's header line.
