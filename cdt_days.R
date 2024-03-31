@@ -8,7 +8,7 @@ myCon <- dbConnect(dbDriver("MySQL"), host = "localhost", default.file = paste("
 
 
 #get per day info including sleeping location and termini
-cdt_days <- dbGetQuery(myCon, "select d.cdt_day, miles, day_type, latitude, longitude, rain, snow, sleet, hail
+cdt_days <- dbGetQuery(myCon, "select d.cdt_day, miles, day_type, hike_friend_day_status, latitude, longitude, rain, snow, sleet, hail
                                from cdt_days d, cdt_places p
                                where d.cdt_day = p.cdt_day
                                and place_type in ('camp', 'town', 'termini')
@@ -170,6 +170,19 @@ map('state', region = states, add=T)
 
 points(cdt_places$longitude[cdt_places$place_type == 'camp'], cdt_places$latitude[cdt_places$place_type == 'camp'], type='l', col=adjustcolor('grey', .6))
 text(cdt_places$longitude[cdt_places$place_type == 'sidehike'], cdt_places$latitude[cdt_places$place_type == 'sidehike'], cdt_places$place[cdt_places$place_type == 'sidehike'], cex=.3)
+
+
+
+#map of amount of each day hiking with other people
+plot(1, type='n', xlim=c(-117, -102), ylim=c(31, 50), bty='n', xaxt='n', yaxt='n', xlab='', ylab='', main = 'Amount of each day hiking with other people')
+map('state', region = states, add=T)
+
+points(cdt_days$longitude[cdt_days$hike_friend_day_status == 'all' & cdt_days$day_type != 'zero'], cdt_days$latitude[cdt_days$hike_friend_day_status == 'all' & cdt_days$day_type != 'zero'], pch=20, cex=2, col='red')
+points(cdt_days$longitude[cdt_days$hike_friend_day_status == 'most' & cdt_days$day_type != 'zero'], cdt_days$latitude[cdt_days$hike_friend_day_status == 'most' & cdt_days$day_type != 'zero'], pch=20, cex=2, col='purple')
+points(cdt_days$longitude[cdt_days$hike_friend_day_status == 'less' & cdt_days$day_type != 'zero'], cdt_days$latitude[cdt_days$hike_friend_day_status == 'less' & cdt_days$day_type != 'zero'], pch=20, cex=2, col='blue')
+points(cdt_days$longitude[cdt_days$hike_friend_day_status == 'none' & cdt_days$day_type != 'zero'], cdt_days$latitude[cdt_days$hike_friend_day_status == 'none' & cdt_days$day_type != 'zero'], pch=20, cex=2, col='darkgrey')
+
+legend("bottomleft", c('All', 'More than half', 'Less than half', 'None'), fill=c('red', 'purple', 'blue', 'darkgrey'), border=NA)
 
 
 

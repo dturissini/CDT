@@ -37,6 +37,7 @@ def create_tables(conn):
                          cdt_date date, 
                          miles decimal(3,1),
                          day_type varchar(10),
+                         hike_friend_day_status varchar(5),
                          low_temp decimal(4,1),
                          rain int,
                          snow int,
@@ -91,7 +92,7 @@ def load_cdt_days(start_date, cdt_days_file, conn):
         
         conn.execute(text(f"""insert into cdt_days
                               values
-                              ({cdt_day}, null, {values[1]}, 'full', null, {rain}, {snow}, {sleet}, {hail})"""))
+                              ({cdt_day}, null, {values[1]}, 'full', '{values[2]}', null, {rain}, {snow}, {sleet}, {hail})"""))
       else:
         if line != '':
           conn.execute(text(f"""insert into cdt_people
